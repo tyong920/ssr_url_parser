@@ -54,7 +54,18 @@ def parse_ssr_url(ssr_url: str):
         for param in config:
             matches = re.match(r"^(\w+)=(.+)$", param)
             if matches:
-                result[matches[1]] = matches[2]
+                key, value = matches[1],  matches[2]
+
+                if key == "obfsparam":
+                    value_decoded = base64.urlsafe_b64decode(
+                        _fill_missing(value)).decode('utf8')
+                    result['obfs_param'] = value_decoded
+                elif key == "protoparam":
+                    value_decoded = base64.urlsafe_b64decode(
+                        _fill_missing(value)).decode('utf8')
+                    result['protocol_param'] = value_decoded
+                else:
+                    result[key] = value
 
     except Exception as err:
         raise ParseError from err
@@ -63,7 +74,7 @@ def parse_ssr_url(ssr_url: str):
                        'method': method,
                        'obfs': obfs,
                        'password': password_decoded,
-                       'port': port,
+                       'server_port': port,
                        'protocol': protocol,
                        })
         return result
