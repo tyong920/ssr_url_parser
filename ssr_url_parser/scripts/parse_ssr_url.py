@@ -3,11 +3,13 @@
 @Module    : parse_ssr_url.py
 @Author    : tyong920 [tyong920@gmail.com]
 @Created   : 2018/6/22 16:52
-@Desc      : 
+@Desc      :
 """
+import json
+
 import click
 
-from ssr_url_parser import parse_ssr_url, ParseError
+from ssr_url_parser import ParseError, parse_ssr_url
 
 
 @click.command()
@@ -18,7 +20,7 @@ def cli(ssr_url):
     except ParseError:
         click.echo('Parse failed. Please enter a valid ssr url.')
     else:
-        click.echo(parsed)
+        click.echo(json.dumps(parsed))
 
 
 if __name__ == '__main__':
