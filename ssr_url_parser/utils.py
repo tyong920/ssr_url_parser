@@ -3,7 +3,7 @@
 @Module    : utils.py
 @Author    : tyong920 [tyong920@gmail.com]
 @Created   : 2018/6/22 16:36
-@Desc      : 
+@Desc      :
 """
 import base64
 import re
@@ -32,6 +32,7 @@ def check_ipv4(ip: str):
 
 def parse_ssr_url(ssr_url: str):
     """Parse the ssr_url into dict"""
+    result = {}
     try:
         _, url_body = ssr_url.split('://')
         url_body = _fill_missing(url_body)
@@ -48,14 +49,32 @@ def parse_ssr_url(ssr_url: str):
         password_corrected = _fill_missing(password_raw)
         password_decoded = base64.urlsafe_b64decode(
             password_corrected).decode('utf8')
-        password = password_decoded
+
+        # get extra param in ssr string params
+        for param in config:
+            matches = re.match(r"^(\w+)=(.+)$", param)
+            if matches:
+                key, value = matches[1],  matches[2]
+
+                if key == "obfsparam":
+                    value_decoded = base64.urlsafe_b64decode(
+                        _fill_missing(value)).decode('utf8')
+                    result['obfs_param'] = value_decoded
+                elif key == "protoparam":
+                    value_decoded = base64.urlsafe_b64decode(
+                        _fill_missing(value)).decode('utf8')
+                    result['protocol_param'] = value_decoded
+                else:
+                    result[key] = value
+
     except Exception as err:
         raise ParseError from err
     else:
-        return {'ip': ip,
-                'method': method,
-                'obfs': obfs,
-                'password': password,
-                'port': port,
-                'protocol': protocol,
-                }
+        result.update({'server': ip,
+                       'method': method,
+                       'obfs': obfs,
+                       'password': password_decoded,
+                       'server_port': port,
+                       'protocol': protocol,
+                       })
+        return result

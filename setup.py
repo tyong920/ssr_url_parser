@@ -1,11 +1,11 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name='ssr_url_parser',
-    version='0.1',
+    version='0.11',
     packages=find_packages(),
     url='https://github.com/tyong920/ssr_url_parser',
     license='https://www.gnu.org/licenses/lgpl-3.0.en.html',
